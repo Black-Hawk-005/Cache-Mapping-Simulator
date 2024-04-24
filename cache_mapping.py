@@ -144,6 +144,3 @@ def cache_check_L2(address):
     
 L2_mapping(main_memory[89])
 cache_check_L2(main_memory[89])
-
-
-                                                                   
