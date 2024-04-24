@@ -20,6 +20,10 @@ L2 CACHE:
     Size - 16kB
     256 lines
     4-way set associative
+
+    4 bits - tag bits [0,1,2,3]
+    6 bits - set no [4,5,6,7,8,9]
+    6 bits - byte offset [10,11,12,13,14,15]
 '''
 
 #byte address 16 bytes
@@ -98,11 +102,48 @@ def cache_check_L1(address):
         for i in range(64):
             L1[line][i] = main_memory[convert_deci(address[:10])][i]
         
+def L2_cache_intialization():
+    global L2
+    L2=[]
+    for i in range(64):
+        set= []
+        for k in range(0,4):
+            line=[]
+            for j in range(64):
+                line.append(["0000000000000000","0000000000000000"])
+            line.extend([0])
+            set.append(line)
+        L2.append(set)
+
 
 main_memory_initialisation()
 L1_cache_initialization()
-L1_mapping()
-# display_main_memory()
-# display_L1_cache()
-cache_check_L1(main_memory[1021][0][0])
-cache_check_L1(main_memory[1021][0][0])
+L2_cache_intialization()
+
+def L2_mapping(address):
+    global L2
+    set=convert_deci(address[0][0][4:10])
+    min=L2[set][0][-1]
+    index=0
+    for i in range(0,4):
+        if L2[set][i][-1]<min:
+            index=i
+    L2[set][index]=address
+    L2[set][index].extend([1])
+
+def cache_check_L2(address):
+    global L2
+    tag = convert_deci(address[0][0][:4])
+    set = convert_deci(address[0][0][4:10])
+    byte = convert_deci(address[0][0][10:])
+    for i in range(0,4):
+        if(L2[set][i][0][0][:4]==address[0][0][:4]):
+            print("HIT")
+            L2[set][i][-1]+=1
+            break
+    
+L2_mapping(main_memory[89])
+cache_check_L2(main_memory[89])
+
+
+                                                                   
