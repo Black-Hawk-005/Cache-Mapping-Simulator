@@ -101,7 +101,11 @@ def cache_check_L1(address):
         print("MISS")
         for i in range(64):
             L1[line][i] = main_memory[convert_deci(address[:10])][i]
-        
+            
+main_memory_initialisation()
+L1_cache_initialization()
+L2_cache_intialization()
+
 def L2_cache_intialization():
     global L2
     L2=[]
@@ -115,32 +119,27 @@ def L2_cache_intialization():
             set.append(line)
         L2.append(set)
 
-
-main_memory_initialisation()
-L1_cache_initialization()
-L2_cache_intialization()
-
-def L2_mapping(address):
-    global L2
+def L2_mapping(w_address):
+    address=convert_deci(w_address[0:10])
     set=convert_deci(address[0][0][4:10])
     min=L2[set][0][-1]
     index=0
     for i in range(0,4):
         if L2[set][i][-1]<min:
             index=i
+    victim=L2[set][index]
     L2[set][index]=address
     L2[set][index].extend([1])
+    return victim
 
 def cache_check_L2(address):
-    global L2
-    tag = convert_deci(address[0][0][:4])
     set = convert_deci(address[0][0][4:10])
-    byte = convert_deci(address[0][0][10:])
     for i in range(0,4):
         if(L2[set][i][0][0][:4]==address[0][0][:4]):
             print("HIT")
             L2[set][i][-1]+=1
-            break
-    
+            return address
+
+
 L2_mapping(main_memory[89])
 cache_check_L2(main_memory[89])
