@@ -130,9 +130,9 @@ def L2_mapping(w_address):
     victim=L2[set][index]
     L2[set][index]=address
     L2[set][index].extend([1])
-    return victim
 
-def cache_check_L2(address):
+def cache_check_L2(w_address):
+    address=convert_deci(w_address[0:10])
     set = convert_deci(address[0][0][4:10])
     for i in range(0,4):
         if(L2[set][i][0][0][:4]==address[0][0][:4]):
