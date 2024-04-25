@@ -93,17 +93,14 @@ def cache_check_L1(address):
     line = convert_deci(address[3:10])
     byte = convert_deci(address[10:])
     if tag == convert_deci(L1[line][0][0][:3]):
-        print("HIT")
         return 1
     else:
-        print("MISS")
         return 0
 
 def cache_check_L1_victim(address):
     for i in range(4):
         for j in range(64):
             if L1_victim[i][j][0][:10] == address[:10]:
-                print("VICTIM CACHE HIT")
                 victim_count[i] += 1
                 return 1
     return 0
@@ -145,7 +142,6 @@ def cache_check_L1_victim(address):
     for i in range(4):
         for j in range(64):
             if L1_victim[i][j][0][:10] == address[:10]:
-                print("VICTIM CACHE HIT")
                 victim_count[i] += 1
                 return 1
     return 0
@@ -198,24 +194,31 @@ def cache_check_L2(w_address):
             return 1
     return 0
 
-def random_intialization():
-    #L1 cache and L2 cache
-    l1_2=[]
-    for i in range(192):
-        l1_2.append(random.randint(0,1024))
-    l1_1=l1_2.copy()
-    for i in range((len(l1_2)-1),128):
-        cache_store_L1(main_memory[l1_1[i]][0][0])
-        l1_1.pop()
-    for i in range((len(l1_2)-1),0):
-        L2_mapping(main_memory[l1_1[i]])
-        l1_1.pop()
+def random_initialisation():
+    for i in range(256):
+        test_address = convert_bin(i)
+        test_address = test_address[6:]+"000000"
+        cache_check_L1(test_address)
+        if (cache_check_L1(test_address) == 1):
+            pass
+        else:
+            if (cache_check_L1_victim(test_address) == 1):
+                pass
+
+            else:
+                if(cache_check_L2(test_address)):
+                    pass
+                else:
+                    prev_data = cache_store_L1(test_address)
+                    removed_data = cache_store_victim(prev_data)
+                    L2_mapping(removed_data)
+
 
 main_memory_initialisation()
 L1_cache_initialization()
 L1_victim_cache_initialization()
 L2_cache_intialization()
-random_intialization()
+random_initialisation()
 
 while(1):
     choice = int(input("1 - Display Main Memory\n2 - Display L1 cache\n3 - Display the victim cache\n4 - Display L2 cache\n5 - Fetch the address\n6 - Exit\nEnter choice: "))
@@ -266,22 +269,3 @@ while(1):
     else:
         print("Invalid option number")
 
-
-'''
-for i in range(1024):
-    test_address = convert_bin(i)
-    test_address = test_address[6:]+"000000"
-    cache_check_L1(test_address)
-    if (cache_check_L1(test_address) == 1):
-        print("HIT")
-    else:
-        if (cache_check_L1_victim(test_address) == 1):
-            print("VICTIM HIT")
-
-        else:
-            if(cache_check_L2(test_address)):
-                print("HIT")
-            else:
-                prev_data = cache_store_L1(test_address)
-                removed_data = cache_store_victim(prev_data)
-                L2_mapping(removed_data)'''
