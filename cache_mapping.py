@@ -204,7 +204,7 @@ L1_victim_cache_initialization()
 L2_cache_intialization()
 
 while(1):
-    choice = int(input("1 - Display Main Memory\n2 - Display L1 cache\n3 - Display the victim cache\n4 - Display L2 cache\n5 - Enter the address\n6 - Exit\nEnter choice: "))
+    choice = int(input("1 - Display Main Memory\n2 - Display L1 cache\n3 - Display the victim cache\n4 - Display L2 cache\n5 - Fetch the address\n6 - Exit\nEnter choice: "))
     
     if choice == 1:
         display_main_memory()
@@ -224,41 +224,43 @@ while(1):
         if (cache_check_L1(w_address) == 1):
             print("HIT")
         else:
+            print("Memory not found in L1 cache. ")
+            print("Checking in Victim Cache")
             if (cache_check_L1_victim(w_address) == 1):
-                print("VICTIM HIT")
+                print("HIT")
 
             else:
+                print("Memory not found in Victim cache. ")
+                print("Checking in L2 Cache")
                 if(cache_check_L2(w_address)):
                     print("HIT")
                 else:
+                    print("Memory not found in L2 cache")
                     prev_data = cache_store_L1(w_address)
                     removed_data = cache_store_victim(prev_data)
                     L2_mapping(removed_data)
-        
+
     elif choice == 6:
         exit(0)
     
     else:
         print("Invalid option number")
 
-
 '''
-for checking proper mapping using this command
-        for i in range(1024):
-            test_address = convert_bin(i)
-            test_address = test_address[6:]+"000000"
-            cache_check_L1(test_address)
-            if (cache_check_L1(test_address) == 1):
+for i in range(1024):
+    test_address = convert_bin(i)
+    test_address = test_address[6:]+"000000"
+    cache_check_L1(test_address)
+    if (cache_check_L1(test_address) == 1):
+        print("HIT")
+    else:
+        if (cache_check_L1_victim(test_address) == 1):
+            print("VICTIM HIT")
+
+        else:
+            if(cache_check_L2(test_address)):
                 print("HIT")
             else:
-                if (cache_check_L1_victim(test_address) == 1):
-                    print("VICTIM HIT")
-
-                else:
-                    if(cache_check_L2(test_address)):
-                        print("HIT")
-                    else:
-                        prev_data = cache_store_L1(test_address)
-                        removed_data = cache_store_victim(prev_data)
-                        L2_mapping(removed_data)
-'''
+                prev_data = cache_store_L1(test_address)
+                removed_data = cache_store_victim(prev_data)
+                L2_mapping(removed_data)'''
