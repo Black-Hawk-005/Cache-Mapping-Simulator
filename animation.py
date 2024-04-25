@@ -177,7 +177,7 @@ while running:
     window.blit(text, text_rect)
 
     pygame.display.update()  # Update the display
-    time.sleep(0.1)  # Adjust the delay for slower simulation speed
+    time.sleep(1)  # Adjust the delay for slower simulation speed
 
 # Quit Pygame
 pygame.quit()
