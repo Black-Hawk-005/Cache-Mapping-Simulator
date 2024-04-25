@@ -83,7 +83,7 @@ def L1_victim_cache_initialization():
         L1_victim.append(line)
 
 def display_L1_cache():
-    for i in range(4):
+    for i in range(128):
         for j in range(no_of_bytes):
             print(L1[i][j][0]," ",L1[i][j][1])
         print("")
@@ -164,7 +164,7 @@ def L2_cache_intialization():
         L2.append(set)
 
 def display_L2_cache():
-    for i in range(1):
+    for i in range(64):
         for k in range(0,4):
             for j in range(64):
                 print(L2[i][k][j][0]," ",L2[i][k][j][1])
@@ -198,10 +198,24 @@ def cache_check_L2(w_address):
             return 1
     return 0
 
+def random_intialization():
+    #L1 cache and L2 cache
+    l1_2=[]
+    for i in range(192):
+        l1_2.append(random.randint(0,1024))
+    l1_1=l1_2.copy()
+    for i in range((len(l1_2)-1),128):
+        cache_store_L1(main_memory[l1_1[i]][0][0])
+        l1_1.pop()
+    for i in range((len(l1_2)-1),0):
+        L2_mapping(main_memory[l1_1[i]])
+        l1_1.pop()
+
 main_memory_initialisation()
 L1_cache_initialization()
 L1_victim_cache_initialization()
 L2_cache_intialization()
+random_intialization()
 
 while(1):
     choice = int(input("1 - Display Main Memory\n2 - Display L1 cache\n3 - Display the victim cache\n4 - Display L2 cache\n5 - Fetch the address\n6 - Exit\nEnter choice: "))
@@ -221,8 +235,10 @@ while(1):
     elif choice == 5:
         w_number=int(input("enter the word number to be fetched: "))
         w_address=convert_bin(w_number)
+        print("Checking L1 cache: ")
         if (cache_check_L1(w_address) == 1):
             print("HIT")
+
         else:
             print("Memory not found in L1 cache. ")
             print("Checking in Victim Cache")
@@ -234,6 +250,10 @@ while(1):
                 print("Checking in L2 Cache")
                 if(cache_check_L2(w_address)):
                     print("HIT")
+                    prev_data = cache_store_L1(w_address)
+                    removed_data = cache_store_victim(prev_data)
+                    L2_mapping(removed_data)
+
                 else:
                     print("Memory not found in L2 cache")
                     prev_data = cache_store_L1(w_address)
@@ -245,6 +265,7 @@ while(1):
     
     else:
         print("Invalid option number")
+
 
 '''
 for i in range(1024):
